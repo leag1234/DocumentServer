@@ -20,12 +20,18 @@ PRODUCT_VERSION ?= $(shell cat $(EO_DEV)/VERSION)
 
 CHECK_WEBAPPS_DEPS = @test -d $(EO_DEV)/web-apps/build/node_modules || { echo "Run 'make web-apps' first to install dependencies"; exit 1; }
 
-# Dev-friendly cache flush: regenerate nginx cache tag and reload, without
-# the production-only api.js.tpl copy and ds:ds chown from the upstream script.
+# Dev cache flush. Static files are served with a one-year immutable cache under
+# /<version>-<hash>/, and the hash comes from api.js: regenerate it on every
+# build so the browser fetches the new bundles. A fresh web-apps build deploys
+# api.js with the {{HASH_POSTFIX}} placeholder: keep it as the new template.
 define FLUSH_CACHE
-	@HASH=$$(date +'%Y.%m.%d-%H%M' | openssl md5 | awk '{print $$2}'); \
+	@HASH=$$(date +%s%N | openssl md5 | awk '{print $$2}'); \
+	API=$(EO_ROOT)/web-apps/apps/api/documents/api.js; \
+	if grep -q '{{HASH_POSTFIX}}' $$API; then cp -f $$API $$API.tpl; fi; \
+	cp -f $$API.tpl $$API && sed -i "s/{{HASH_POSTFIX}}/$$HASH/g" $$API && rm -f $$API.gz && chown ds:ds $$API $$API.tpl; \
 	echo "set \$$cache_tag \"$$HASH\";" > /etc/nginx/includes/ds-cache.conf; \
-	service nginx reload
+	service nginx reload >/dev/null; \
+	echo "cache flushed: $$HASH"
 endef
 
 sdkjs:    DEBUG_FLAGS = $(SDKJS_FLAGS)
@@ -73,12 +79,33 @@ web-apps-dev:
 ## SDKJS BUILD
 ## -----------------
 
+SDKJS_STAGE := /build/sdkjs-stage
+
+# sdkjs is built with webpack (sdkjs/build/scripts/build-pipeline.cjs); the
+# Gruntfile is gone. The pipeline wipes its BUILD_ROOT/sdkjs, so build into a
+# staging dir and copy over the installed tree: files generated at install time
+# (AllFonts.js, font/theme thumbnails, slide themes) are kept.
 sdkjs:
-	@echo "Building sdkjs with flags $(CFLAGS)"
+	@echo "Building sdkjs (webpack)"
 	cd $(EO_DEV)/sdkjs/build && \
-	npm install && \
-	CC_PLATFORM=$(CC_PLATFORM) BUILD_ROOT=$(EO_ROOT) grunt $(SDKJS_OPTS) $(CFLAGS) develop && \
-	/usr/bin/documentserver-generate-allfonts.sh
+	npm ci --no-audit --no-fund && \
+	BUILD_ROOT=$(SDKJS_STAGE) PRODUCT_VERSION=$(PRODUCT_VERSION) SDK_ADDONS=$(EO_DEV)/sdkjs-forms SKIP_DEVELOP=1 \
+	node scripts/build-pipeline.cjs
+	$(call deploy_sdkjs)
+
+# Fast rebuild: no npm ci, webpack filesystem cache stays warm.
+sdkjs-dev:
+	@test -d $(EO_DEV)/sdkjs/build/node_modules || { echo "Run make sdkjs first to install dependencies"; exit 1; }
+	cd $(EO_DEV)/sdkjs/build && \
+	BUILD_ROOT=$(SDKJS_STAGE) PRODUCT_VERSION=$(PRODUCT_VERSION) SDK_ADDONS=$(EO_DEV)/sdkjs-forms SKIP_DEVELOP=1 \
+	node scripts/build-pipeline.cjs
+	$(call deploy_sdkjs)
+
+define deploy_sdkjs
+	cp -a $(SDKJS_STAGE)/sdkjs/. $(EO_ROOT)/sdkjs/
+	chown -R ds:ds $(EO_ROOT)/sdkjs
+	$(FLUSH_CACHE)
+endef
 
 ## -----------------
 ## CORE BUILD
