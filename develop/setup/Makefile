@@ -34,8 +34,19 @@ define FLUSH_CACHE
 	if grep -q '{{HASH_POSTFIX}}' $$API; then cp -f $$API $$API.tpl; fi; \
 	cp -f $$API.tpl $$API && sed -i "s/{{HASH_POSTFIX}}/$$HASH/g" $$API && rm -f $$API.gz && chown ds:ds $$API $$API.tpl; \
 	echo "set \$$cache_tag \"$$HASH\";" > /etc/nginx/includes/ds-cache.conf; \
+	$(REFRESH_GZIP) \
 	service nginx reload >/dev/null; \
 	echo "cache flushed: $$HASH"
+endef
+
+# With gzip_static on (documentserver-static-gzip.sh), nginx serves file.gz when it exists,
+# even if it is older than the file: recompress what a rebuild replaced.
+define REFRESH_GZIP
+	if grep -qE '^[[:space:]]*gzip_static on' /etc/nginx/includes/ds-docservice.conf 2>/dev/null; then \
+	  cd $(EO_ROOT) && find ./sdkjs ./web-apps -type f \( -name '*.js' -o -name '*.json' -o -name '*.html' -o -name '*.css' -o -name '*.bin' -o -name '*.wasm' -o -name '*.svg' \) -print0 | \
+	  xargs -0 -r -n 64 -P $$(nproc) sh -c 'for f; do [ "$$f.gz" -nt "$$f" ] || gzip -kf9 "$$f"; done' _; \
+	  echo "gzip_static: stale .gz refreshed"; \
+	fi;
 endef
 
 sdkjs:    DEBUG_FLAGS = $(SDKJS_FLAGS)

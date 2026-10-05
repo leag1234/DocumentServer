@@ -51,7 +51,11 @@ GENERATE_FONTS="${GENERATE_FONTS:-true}"
 
 MAX_FILE_SIZE="${MAX_FILE_SIZE:-104857600}"
 
-NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-1}"
+# auto = one worker per core: a single worker serialises every request of every
+# client, including the on-the-fly compression of the editor bundles
+NGINX_WORKER_PROCESSES="${NGINX_WORKER_PROCESSES:-auto}"
+# serve precompressed static files (documentserver-static-gzip.sh, nginx gzip_static)
+STATIC_GZIP="${STATIC_GZIP:-true}"
 NGINX_ACCESS_LOG="${NGINX_ACCESS_LOG:-false}"
 NGINX_CLIENT_MAX_BODY_SIZE="${NGINX_CLIENT_MAX_BODY_SIZE:-100m}"
 SSL_VERIFY_CLIENT="${SSL_VERIFY_CLIENT:-off}"
@@ -569,6 +573,13 @@ service nginx start
 # --------------------------------------------------------------------
 if [ "$GENERATE_FONTS" = "true" ] && command -v /usr/bin/documentserver-generate-allfonts.sh >/dev/null 2>&1; then
   /usr/bin/documentserver-generate-allfonts.sh
+fi
+
+# Precompress the static files (editor bundles, fonts, dictionaries) once at -9 instead of
+# compressing them on the fly at every request; in the background: nginx keeps compressing on
+# the fly until the script turns gzip_static on and reloads it. Incremental after a restart.
+if [ "$STATIC_GZIP" = "true" ] && command -v /usr/bin/documentserver-static-gzip.sh >/dev/null 2>&1; then
+  ( /usr/bin/documentserver-static-gzip.sh >/dev/null 2>&1 && echo "[static-gzip] precompressed static files served" ) &
 fi
 
 if [ "$PLUGINS_ENABLED" = "true" ] && command -v documentserver-pluginsmanager.sh >/dev/null 2>&1 \
