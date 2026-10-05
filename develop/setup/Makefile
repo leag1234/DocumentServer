@@ -40,11 +40,12 @@ define FLUSH_CACHE
 endef
 
 # With gzip_static on (documentserver-static-gzip.sh), nginx serves file.gz when it exists,
-# even if it is older than the file: recompress what a rebuild replaced.
+# even if it is older than the file: recompress what a rebuild replaced (gzip -k gives the
+# .gz the mtime of its source, so a .gz is stale when its source is newer).
 define REFRESH_GZIP
 	if grep -qE '^[[:space:]]*gzip_static on' /etc/nginx/includes/ds-docservice.conf 2>/dev/null; then \
 	  cd $(EO_ROOT) && find ./sdkjs ./web-apps -type f \( -name '*.js' -o -name '*.json' -o -name '*.html' -o -name '*.css' -o -name '*.bin' -o -name '*.wasm' -o -name '*.svg' \) -print0 | \
-	  xargs -0 -r -n 64 -P $$(nproc) sh -c 'for f; do [ "$$f.gz" -nt "$$f" ] || gzip -kf9 "$$f"; done' _; \
+	  xargs -0 -r -n 64 -P $$(nproc) sh -c 'for f; do [ -e "$$f.gz" ] && ! [ "$$f" -nt "$$f.gz" ] || gzip -kf9 "$$f"; done' _; \
 	  echo "gzip_static: stale .gz refreshed"; \
 	fi;
 endef
