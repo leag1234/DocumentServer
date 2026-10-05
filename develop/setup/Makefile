@@ -18,6 +18,10 @@ WEBAPPS_FLAGS :=
 #   PRODUCT_VERSION=9.4.0 make web-apps-dev
 PRODUCT_VERSION ?= $(shell cat $(EO_DEV)/VERSION)
 
+# web-apps theme (web-apps/theme/<name>). Override for a downstream brand:
+#   make web-apps-dev THEME=mybrand
+THEME ?= euro-office
+
 CHECK_WEBAPPS_DEPS = @test -d $(EO_DEV)/web-apps/build/node_modules || { echo "Run 'make web-apps' first to install dependencies"; exit 1; }
 
 # Dev cache flush. Static files are served with a one-year immutable cache under
@@ -62,7 +66,7 @@ web-apps:
 	python3 merge_and_check.py && \
 	cd $(EO_DEV)/web-apps/build && \
 	npm ci && \
-	BUILD_ROOT=$(EO_ROOT) PRODUCT_VERSION=$(PRODUCT_VERSION) THEME=euro-office \
+	BUILD_ROOT=$(EO_ROOT) PRODUCT_VERSION=$(PRODUCT_VERSION) THEME=$(THEME) \
 	node scripts/build-pipeline.js
 	$(FLUSH_CACHE)
 
@@ -71,7 +75,7 @@ web-apps-dev:
 	cd $(EO_DEV)/web-apps/translation && \
 	python3 merge_and_check.py && \
 	cd $(EO_DEV)/web-apps/build && \
-	BUILD_ROOT=$(EO_ROOT) PRODUCT_VERSION=$(PRODUCT_VERSION) THEME=euro-office \
+	BUILD_ROOT=$(EO_ROOT) PRODUCT_VERSION=$(PRODUCT_VERSION) THEME=$(THEME) \
 	node scripts/build-pipeline.js
 	$(FLUSH_CACHE)
 
