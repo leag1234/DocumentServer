@@ -63,14 +63,15 @@ RUN apt-get update && \
     ( timeout 60 runuser -u rabbitmq -- sh -c \
         'until rabbitmqctl -q await_startup --timeout 5 >/dev/null 2>&1; do sleep 1; done' \
       || runuser -u rabbitmq -- rabbitmqctl await_startup --timeout 5 ) && \
-    sudo -u postgres psql -c "CREATE USER eurooffice WITH password 'eurooffice';" && \
-    sudo -u postgres psql -c "CREATE DATABASE eurooffice OWNER eurooffice;" && \
+    DB=$(echo "${COMPANY_NAME_LOW}" | tr -d -- '-') && \
+    sudo -u postgres psql -c "CREATE USER ${DB} WITH password '${DB}';" && \
+    sudo -u postgres psql -c "CREATE DATABASE ${DB} OWNER ${DB};" && \
     echo "${COMPANY_NAME_LOW}-${PRODUCT_NAME_LOW} ds/db-type string postgres" | debconf-set-selections && \
     echo "${COMPANY_NAME_LOW}-${PRODUCT_NAME_LOW} ds/db-host string localhost" | debconf-set-selections && \
     echo "${COMPANY_NAME_LOW}-${PRODUCT_NAME_LOW} ds/db-port string 5432" | debconf-set-selections && \
-    echo "${COMPANY_NAME_LOW}-${PRODUCT_NAME_LOW} ds/db-user string eurooffice" | debconf-set-selections && \
-    echo "${COMPANY_NAME_LOW}-${PRODUCT_NAME_LOW} ds/db-pwd password eurooffice" | debconf-set-selections && \
-    echo "${COMPANY_NAME_LOW}-${PRODUCT_NAME_LOW} ds/db-name string eurooffice" | debconf-set-selections && \
+    echo "${COMPANY_NAME_LOW}-${PRODUCT_NAME_LOW} ds/db-user string ${DB}" | debconf-set-selections && \
+    echo "${COMPANY_NAME_LOW}-${PRODUCT_NAME_LOW} ds/db-pwd password ${DB}" | debconf-set-selections && \
+    echo "${COMPANY_NAME_LOW}-${PRODUCT_NAME_LOW} ds/db-name string ${DB}" | debconf-set-selections && \
     DS_DOCKER_INSTALLATION=true apt-get install -yq /tmp/${COMPANY_NAME_LOW}-${PRODUCT_NAME_LOW}_${PRODUCT_VERSION}-${BUILD_NUMBER}_${TARGETARCH}.deb && \
     (runuser -u rabbitmq -- rabbitmqctl shutdown || true) && \
     rm -rf /var/lib/rabbitmq/mnesia /var/lib/apt/lists/* /tmp/*

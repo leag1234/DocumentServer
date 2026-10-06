@@ -9,6 +9,7 @@
 
 FROM finalubuntu AS develop
     ARG PRODUCT_VERSION
+    ARG COMPANY_NAME_LOW
     # Avoid interactive prompts during package install
     ARG DEBIAN_FRONTEND=noninteractive
     ENV TZ=Etc/UTC
@@ -57,4 +58,4 @@ FROM finalubuntu AS develop
 
     ENV PRODUCT_VERSION=${PRODUCT_VERSION}
     ENV EO_DEV=/develop
-    ENV THEME=euro-office
+    ENV THEME=${COMPANY_NAME_LOW}

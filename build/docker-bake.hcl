@@ -21,6 +21,12 @@ variable "PRODUCT_NAME_LOW" {
   default = regex_replace(lower(PRODUCT_NAME), "\\s+", "-")
 }
 
+# web-apps theme directory (web-apps/theme/<THEME>); a brand HCL can ship its
+# own theme through the brand-icons target (/web-apps/theme/<THEME>).
+variable "THEME" {
+  default = COMPANY_NAME_LOW
+}
+
 variable "REGISTRY" {
   default = "ghcr.io/${COMPANY_NAME_LOW}"
 }
@@ -99,6 +105,7 @@ target "_common" {
     PRODUCT_NAME_LOW    = "${PRODUCT_NAME_LOW}"
     COMPANY_NAME        = "${COMPANY_NAME}"
     COMPANY_NAME_LOW    = "${COMPANY_NAME_LOW}"
+    THEME               = "${THEME}"
   }
 }
 
@@ -154,6 +161,9 @@ target "web-apps" {
   tags       = ["${REGISTRY}/web-apps:${TAG}"]
   cache-from = ["type=local,src=/tmp/${REGISTRY}/web-apps"]
   cache-to   = ["type=local,dest=/tmp/${REGISTRY}/web-apps,mode=max"]
+  contexts = {
+    brand-icons    = "target:brand-icons"
+  }
 }
 
 target "server" {

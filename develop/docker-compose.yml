@@ -2,7 +2,7 @@ name: Euro-Office development environment
 
 services:
   eo:
-    image: ghcr.io/euro-office/documentserver:latest-dev
+    image: ${EO_IMAGE:-ghcr.io/euro-office/documentserver:latest-dev}
     #build:
     #  context: ../
     #  dockerfile: ./build/Dockerfile
@@ -19,7 +19,7 @@ services:
       USE_UNAUTHORIZED_STORAGE: true
       EXAMPLE_ENABLED: true
       JWT_SECRET: ${EO_JWT_SECRET:-euro-office-dev-jwt-secret-key-2026}
-      THEME: euro-office
+      THEME: ${THEME:-euro-office}
     volumes:
       - ../:/develop:z # mounts deployed files to application
       - ./setup/Makefile:/Makefile:z # mounts deployed files to application

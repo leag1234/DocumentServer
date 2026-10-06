@@ -4,7 +4,8 @@ ARG MARIADB_VERSION="latest"
 
 FROM fedora:43 AS ds-base
 
-    LABEL maintainer Euro-Office
+    ARG COMPANY_NAME=Euro-Office
+    LABEL maintainer=${COMPANY_NAME}
 
     ARG COMPANY_NAME_LOW=euro-office
     ARG DS_VERSION_HASH
@@ -251,15 +252,17 @@ FROM ds-base AS docs
 
 
 FROM node:22-alpine3.19 AS example
-    LABEL maintainer Euro-Office
+    ARG COMPANY_NAME=Euro-Office
+    ARG COMPANY_NAME_LOW=euro-office
+    LABEL maintainer=${COMPANY_NAME}
 
     ENV LANG=en_US.UTF-8 \
         LANGUAGE=en_US:en \
         LC_ALL=en_US.UTF-8 \
         NODE_ENV=production-linux \
-        NODE_CONFIG_DIR=/etc/euro-office/documentserver-example/
+        NODE_CONFIG_DIR=/etc/${COMPANY_NAME_LOW}/documentserver-example/
 
-    WORKDIR /var/www/euro-office/documentserver-example/
+    WORKDIR /var/www/${COMPANY_NAME_LOW}/documentserver-example/
 
     COPY document-server-integration ./document-server-integration
 
@@ -269,35 +272,36 @@ FROM node:22-alpine3.19 AS example
         #--depth 1 \
         #--recurse-submodules \
         #https://github.com/Euro-Office/document-server-integration.git && \
-        mkdir -p /var/www/euro-office/documentserver-example && \
+        mkdir -p /var/www/${COMPANY_NAME_LOW}/documentserver-example && \
         cp -r ./document-server-integration/web/documentserver-example/nodejs/. \
-        /var/www/euro-office/documentserver-example/ && \
+        /var/www/${COMPANY_NAME_LOW}/documentserver-example/ && \
         rm -rf ./document-server-integration && \
         addgroup -S -g 1001 ds && \
         adduser \
         -S \
         -G ds \
         -D \
-        -h /var/www/euro-office/documentserver-example \
+        -h /var/www/${COMPANY_NAME_LOW}/documentserver-example \
         -s /sbin/nologin \
         -u 1001 ds && \
-        chown -R ds:ds /var/www/euro-office/documentserver-example/ && \
-        mkdir -p /var/lib/euro-office/documentserver-example/ && \
-        chown -R ds:ds /var/lib/euro-office/ && \
-        mv files /var/lib/euro-office/documentserver-example/ && \
-        mkdir -p /etc/euro-office/documentserver-example/ && \
-        chown -R ds:ds /etc/euro-office/ && \
-        mv config/* /etc/euro-office/documentserver-example/ && \
+        chown -R ds:ds /var/www/${COMPANY_NAME_LOW}/documentserver-example/ && \
+        mkdir -p /var/lib/${COMPANY_NAME_LOW}/documentserver-example/ && \
+        chown -R ds:ds /var/lib/${COMPANY_NAME_LOW}/ && \
+        mv files /var/lib/${COMPANY_NAME_LOW}/documentserver-example/ && \
+        mkdir -p /etc/${COMPANY_NAME_LOW}/documentserver-example/ && \
+        chown -R ds:ds /etc/${COMPANY_NAME_LOW}/ && \
+        mv config/* /etc/${COMPANY_NAME_LOW}/documentserver-example/ && \
         rmdir config && \
-        ln -sf /etc/euro-office/documentserver-example \
-            /var/www/euro-office/documentserver-example/config && \
+        ln -sf /etc/${COMPANY_NAME_LOW}/documentserver-example \
+            /var/www/${COMPANY_NAME_LOW}/documentserver-example/config && \
         npm install
 
     EXPOSE 3000
 
     USER ds
 
-    ENTRYPOINT ["/var/www/euro-office/documentserver-example/docker-entrypoint.sh", "npm", "start"]
+    # exec form does not expand variables: the WORKDIR above is the example root
+    ENTRYPOINT ["./docker-entrypoint.sh", "npm", "start"]
 
 FROM python:3.14-bookworm AS builder
     RUN pip install redis psycopg2  PyMySQL pika python-qpid-proton func_timeout requests kubernetes flask

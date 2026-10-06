@@ -4,10 +4,14 @@ set -e
 # --------------------------------------------------------------------
 # Paths
 # --------------------------------------------------------------------
-EO_ROOT="${EO_ROOT:-/var/www/euro-office/documentserver}"
-EO_LOG="${EO_LOG:-/var/log/euro-office/documentserver}"
-EO_CONF="${EO_CONF:-/etc/euro-office/documentserver}"
-DATA_DIR="/var/www/euro-office/Data"
+# COMPANY_NAME_LOW/PRODUCT_NAME_LOW and EO_* are set as ENV by the image
+# (standalone.bake.Dockerfile); the fallbacks only matter outside it.
+COMPANY_NAME_LOW="${COMPANY_NAME_LOW:-euro-office}"
+PRODUCT_NAME_LOW="${PRODUCT_NAME_LOW:-documentserver}"
+EO_ROOT="${EO_ROOT:-/var/www/${COMPANY_NAME_LOW}/${PRODUCT_NAME_LOW}}"
+EO_LOG="${EO_LOG:-/var/log/${COMPANY_NAME_LOW}/${PRODUCT_NAME_LOW}}"
+EO_CONF="${EO_CONF:-/etc/${COMPANY_NAME_LOW}/${PRODUCT_NAME_LOW}}"
+DATA_DIR="${EO_ROOT%/*}/Data"
 PRIVATE_DIR="${DATA_DIR}/.private"
 CONFIG_FILE="${EO_CONF}/local.json"
 LOG4JS_CONFIG="${EO_CONF}/log4js/production.json"
@@ -30,8 +34,11 @@ JWT_IN_BODY="${JWT_IN_BODY:-false}"
 DB_TYPE="${DB_TYPE:-postgres}"
 DB_HOST="${DB_HOST:-localhost}"
 DB_PORT="${DB_PORT:-5432}"
-DB_NAME="${DB_NAME:-eurooffice}"
-DB_USER="${DB_USER:-eurooffice}"
+# Bundled PostgreSQL role/database: the company name without dashes, as created
+# by standalone.bake.Dockerfile (dashes removed: my-company -> mycompany).
+DB_DEFAULT=$(printf '%s' "$COMPANY_NAME_LOW" | tr -d -- '-')
+DB_NAME="${DB_NAME:-$DB_DEFAULT}"
+DB_USER="${DB_USER:-$DB_DEFAULT}"
 
 AMQP_HOST="${AMQP_HOST:-localhost}"
 AMQP_PORT="${AMQP_PORT:-5672}"

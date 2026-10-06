@@ -95,7 +95,7 @@ cmd_up() {
     -e JWT_SECRET="$EO_JWT_SECRET" \
     -e USE_UNAUTHORIZED_STORAGE=true \
     -e ALLOW_PRIVATE_IP_ADDRESS=true \
-    -e THEME=euro-office \
+    -e THEME="${THEME:-euro-office}" \
     -v "$root:/develop" \
     -v "$SCRIPT_DIR/setup/Makefile:/Makefile" \
     "$EO_IMAGE" >/dev/null; then
