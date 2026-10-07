@@ -2,7 +2,7 @@
 
 ## Introduction
 
-To simplify Euro-Office Document Server builds, this project uses Docker under the hood.
+To simplify ElixirOffice Document Server builds, this project uses Docker under the hood.
 You will find instructions below to prepare your build user to run Docker correctly.
 This setup is usually done only once per machine.
 

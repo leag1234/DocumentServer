@@ -11,7 +11,7 @@ const EDITOR_TYPES = [
 test.describe('Example page - Create new', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(EXAMPLE_PATH);
-    await expect(page).toHaveTitle(/ONLYOFFICE|euro-office/i);
+    await expect(page).toHaveTitle(/ONLYOFFICE|elixiroffice/i);
   });
 
   for (const editor of EDITOR_TYPES) {

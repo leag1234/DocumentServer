@@ -117,7 +117,7 @@ A PR should:
 
 ## AI-assisted contributions
 
-Euro-Office allows contributions made with the help of AI tools. You are the author of everything you submit — AI assistance does not change that responsibility.
+ElixirOffice allows contributions made with the help of AI tools. You are the author of everything you submit — AI assistance does not change that responsibility.
 
 * **Disclosure:** Declare AI tool use in the PR description and add an `Assisted-by: AGENT_NAME:MODEL_VERSION` git trailer to each affected commit.
 * **Accountability:** You must be able to explain, defend, and modify every line you submit. If a reviewer asks why something works a certain way, "the AI wrote it" is not an answer.
@@ -128,4 +128,4 @@ Euro-Office allows contributions made with the help of AI tools. You are the aut
 
 For the full policy including autonomous agent rules, security reports, and beginner issues, read the [AI Contribution Policy][aipolicy].
 
-[aipolicy]: https://github.com/Euro-Office/.github/blob/main/AI_POLICY.md
+[aipolicy]: https://github.com/elixiroffice/.github/blob/main/AI_POLICY.md

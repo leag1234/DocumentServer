@@ -6,7 +6,7 @@ set -e
 # --------------------------------------------------------------------
 # COMPANY_NAME_LOW/PRODUCT_NAME_LOW and EO_* are set as ENV by the image
 # (standalone.bake.Dockerfile); the fallbacks only matter outside it.
-COMPANY_NAME_LOW="${COMPANY_NAME_LOW:-euro-office}"
+COMPANY_NAME_LOW="${COMPANY_NAME_LOW:-elixiroffice}"
 PRODUCT_NAME_LOW="${PRODUCT_NAME_LOW:-documentserver}"
 EO_ROOT="${EO_ROOT:-/var/www/${COMPANY_NAME_LOW}/${PRODUCT_NAME_LOW}}"
 EO_LOG="${EO_LOG:-/var/log/${COMPANY_NAME_LOW}/${PRODUCT_NAME_LOW}}"

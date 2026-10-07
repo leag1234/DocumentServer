@@ -40,14 +40,14 @@ jobs:
         IFS='/' read -r owner repo <<< "${{ matrix.repo }}"
         mkdir -p tmp-repo
         cd tmp-repo
-        git config --global user.name "Euro-Office via GitHub Actions"
+        git config --global user.name "ElixirOffice via GitHub Actions"
         git clone --bare https://github.com/${{ matrix.repo }}.git
         cd $repo.git
         git fetch --all
-        git remote add eurooffice https://x-access-token:${{ env.GITHUB_TOKEN }}@github.com/Euro-Office/${repo}.git
-        # Push all branches and tags from the cloned bare repository to the eurooffice remote.
+        git remote add elixiroffice https://x-access-token:${{ env.GITHUB_TOKEN }}@github.com/ElixirOffice/${repo}.git
+        # Push all branches and tags from the cloned bare repository to the elixiroffice remote.
         # Avoid --mirror because it can delete branches on the target that exist only there.
-        git push eurooffice --all
-        git push eurooffice --tags
+        git push elixiroffice --all
+        git push elixiroffice --tags
       env:
-        GITHUB_TOKEN: ${{ secrets.EURO_OFFICE_MIRROR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.ELIXIROFFICE_MIRROR_TOKEN }}

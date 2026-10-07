@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 #
-# Vagrant multi-machine setup for testing Euro-Office Document Server
+# Vagrant multi-machine setup for testing ElixirOffice Document Server
 # .deb and .rpm packages on real VMs.
 #
 # Prerequisites:

@@ -20,7 +20,7 @@ PRODUCT_VERSION ?= $(shell cat $(EO_DEV)/VERSION)
 
 # web-apps theme (web-apps/theme/<name>). Override for a downstream brand:
 #   make web-apps-dev THEME=mybrand
-THEME ?= euro-office
+THEME ?= elixiroffice
 
 CHECK_WEBAPPS_DEPS = @test -d $(EO_DEV)/web-apps/build/node_modules || { echo "Run 'make web-apps' first to install dependencies"; exit 1; }
 

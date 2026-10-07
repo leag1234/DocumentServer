@@ -1,6 +1,6 @@
-# Euro-Office Document Server
+# ElixirOffice Document Server
 
-Docker image where we are experimenting with building the Euro-Office Document Server.
+Docker image where we are experimenting with building the ElixirOffice Document Server.
 
 Before starting, make sure Docker and your build user are set up: [Build Requisites](./BUILD_REQUISITES.md).
 
@@ -9,7 +9,7 @@ Before starting, make sure Docker and your build user are set up: [Build Requisi
 First, clone the repositories for the core-fonts, sdkjs, web-apps, and server components:
 
 ```sh
-git clone --recurse-submodules https://github.com/Euro-Office/DocumentServer.git
+git clone --recurse-submodules https://github.com/elixiroffice/DocumentServer.git
 ```
 
 If the repo was cloned without --recurse-submodules, initialize and download the submodules with:
@@ -84,7 +84,7 @@ By default the `packages` stage rebuilds on top of `finalubuntu`. If you have
 already built and tagged the final image locally you can skip rebuilding it:
 
 ```sh
-docker buildx bake packages --set PACKAGE_BASE=euro-office/documentserver:latest
+docker buildx bake packages --set PACKAGE_BASE=elixiroffice/documentserver:latest
 ```
 
 

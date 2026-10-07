@@ -4,10 +4,10 @@ ARG MARIADB_VERSION="latest"
 
 FROM fedora:43 AS ds-base
 
-    ARG COMPANY_NAME=Euro-Office
+    ARG COMPANY_NAME=ElixirOffice
     LABEL maintainer=${COMPANY_NAME}
 
-    ARG COMPANY_NAME_LOW=euro-office
+    ARG COMPANY_NAME_LOW=elixiroffice
     ARG DS_VERSION_HASH
     ENV COMPANY_NAME_LOW=$COMPANY_NAME_LOW \
         APPLICATION_NAME=$COMPANY_NAME_LOW \
@@ -252,8 +252,8 @@ FROM ds-base AS docs
 
 
 FROM node:22-alpine3.19 AS example
-    ARG COMPANY_NAME=Euro-Office
-    ARG COMPANY_NAME_LOW=euro-office
+    ARG COMPANY_NAME=ElixirOffice
+    ARG COMPANY_NAME_LOW=elixiroffice
     LABEL maintainer=${COMPANY_NAME}
 
     ENV LANG=en_US.UTF-8 \
@@ -271,7 +271,7 @@ FROM node:22-alpine3.19 AS example
         #git clone \
         #--depth 1 \
         #--recurse-submodules \
-        #https://github.com/Euro-Office/document-server-integration.git && \
+        #https://github.com/elixiroffice/document-server-integration.git && \
         mkdir -p /var/www/${COMPANY_NAME_LOW}/documentserver-example && \
         cp -r ./document-server-integration/web/documentserver-example/nodejs/. \
         /var/www/${COMPANY_NAME_LOW}/documentserver-example/ && \
@@ -341,17 +341,17 @@ FROM python:3.14-slim-bookworm AS utils
     USER ds
 
 FROM statsd/statsd AS metrics
-    ARG COMPANY_NAME_LOW=euro-office
+    ARG COMPANY_NAME_LOW=elixiroffice
     COPY --from=ds-service /var/www/$COMPANY_NAME_LOW/documentserver/server/Metrics/config/config.js /usr/src/app/config.js
 
 FROM postgres:$POSTGRES_VERSION AS db
-    ARG COMPANY_NAME_LOW=euro-office
+    ARG COMPANY_NAME_LOW=elixiroffice
     COPY --from=ds-service /var/www/$COMPANY_NAME_LOW/documentserver/server/schema/postgresql/createdb.sql /docker-entrypoint-initdb.d/
 
 FROM mysql:$MYSQL_VERSION AS mysqldb
-    ARG COMPANY_NAME_LOW=euro-office
+    ARG COMPANY_NAME_LOW=elixiroffice
     COPY --chmod=777 --from=ds-service /var/www/$COMPANY_NAME_LOW/documentserver/server/schema/mysql/createdb.sql /docker-entrypoint-initdb.d/
 
 FROM mariadb:$MARIADB_VERSION AS db-mariadb
-    ARG COMPANY_NAME_LOW=euro-office
+    ARG COMPANY_NAME_LOW=elixiroffice
     COPY --from=ds-service /var/www/$COMPANY_NAME_LOW/documentserver/server/schema/mysql/createdb.sql /docker-entrypoint-initdb.d/

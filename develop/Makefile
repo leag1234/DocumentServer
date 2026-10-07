@@ -1,7 +1,7 @@
 PRODUCT_VERSION ?= $(shell cat ../VERSION)
 export PRODUCT_VERSION
 
-EO_JWT_SECRET ?= euro-office-dev-jwt-secret-key-2026
+EO_JWT_SECRET ?= elixiroffice-dev-jwt-secret-key-2026
 export EO_JWT_SECRET
 
 # Detect host LAN IP for phones/emulators/LAN devices. Used by `make mobile`
@@ -28,7 +28,7 @@ local:
 	@echo "   ███████╗╚██████╔╝"
 	@echo "   ╚══════╝ ╚═════╝"
 	@echo ""
-	@echo "   Euro-Office Development Environment"
+	@echo "   ElixirOffice Development Environment"
 	@echo ""
 ifeq ($(HOST_LAN_IP),)
 	@echo "   Mode: localhost (desktop browser + iOS sim)"
@@ -74,7 +74,7 @@ mobile:
 # or non-current NC.
 next:
 	@echo ""
-	@echo "   Euro-Office — Next NC testing"
+	@echo "   ElixirOffice — Next NC testing"
 	@echo "   NC branch: $${NC_BRANCH:-master}"
 	@echo "   Volume:    nc_data_$${NC_BRANCH:-master}  (preserved across switches)"
 	@echo ""
@@ -112,10 +112,10 @@ build:
 	(docker compose up -d) && \
 	(docker compose exec eo bash || true)
 
-# Align Euro-Office URLs and trusted_domains with the current mode.
+# Align ElixirOffice URLs and trusted_domains with the current mode.
 # - If HOST_LAN_IP is set: mobile/LAN mode (DocumentServerUrl = http://<ip>:8080/, trusted_domains[2] = <ip>).
 # - If HOST_LAN_IP is empty: localhost mode (DocumentServerUrl = http://localhost:8080/, trusted_domains[2] cleared).
-# Waits for Nextcloud + Euro-Office to finish installing on first boot, then applies idempotently.
+# Waits for Nextcloud + ElixirOffice to finish installing on first boot, then applies idempotently.
 refresh-urls:
 	@start=$$(date +%s); \
 	  while ! docker compose exec -T eo curl -sf http://localhost/healthcheck >/dev/null 2>&1; do \
@@ -128,7 +128,7 @@ refresh-urls:
 	  done; \
 	  printf "\r[eo]        ready        (%ds)        \n" $$(($$(date +%s) - start))
 	@start=$$(date +%s); \
-	  while ! docker compose exec -T -u www-data nextcloud ./occ config:app:get eurooffice DocumentServerUrl 2>/dev/null | grep -q "http"; do \
+	  while ! docker compose exec -T -u www-data nextcloud ./occ config:app:get elixiroffice DocumentServerUrl 2>/dev/null | grep -q "http"; do \
 	    if [ "$$(docker inspect --format '{{.State.Status}}' nextcloud 2>/dev/null)" != "running" ]; then \
 	      printf "\r[nextcloud] failed — check: docker compose logs nextcloud\n"; \
 	      exit 1; \
@@ -145,13 +145,13 @@ refresh-urls:
 	  printf "\r[nextcloud] ready        (%ds)        \n" $$(($$(date +%s) - start))
 	@target="$${HOST_LAN_IP:-localhost}"; \
 	  echo "Setting DocumentServerUrl to http://$$target:8080/"; \
-	  docker compose exec -T -u www-data nextcloud ./occ config:app:set eurooffice DocumentServerUrl --value="http://$$target:8080/" >/dev/null 2>&1; \
+	  docker compose exec -T -u www-data nextcloud ./occ config:app:set elixiroffice DocumentServerUrl --value="http://$$target:8080/" >/dev/null 2>&1; \
 	  if [ "$$target" = "localhost" ]; then \
 	    docker compose exec -T -u www-data nextcloud ./occ config:system:delete trusted_domains 2 >/dev/null 2>&1 || true; \
 	  else \
 	    docker compose exec -T -u www-data nextcloud ./occ config:system:set trusted_domains 2 --value=$$target >/dev/null 2>&1; \
 	  fi
-	@docker compose exec -T -u www-data nextcloud ./occ config:app:set eurooffice jwt_secret --value="$(EO_JWT_SECRET)" >/dev/null 2>&1; \
+	@docker compose exec -T -u www-data nextcloud ./occ config:app:set elixiroffice jwt_secret --value="$(EO_JWT_SECRET)" >/dev/null 2>&1; \
 	  echo "JWT secret aligned with document server"
 
 # Print the Nextcloud version installed in the running container. Useful after

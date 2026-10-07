@@ -11,7 +11,7 @@ permissions:
   packages: write
 
 env:
-  ORG: euro-office
+  ORG: elixiroffice
   PACKAGE: documentserver-build-cache
 
 jobs:

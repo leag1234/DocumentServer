@@ -4,5 +4,5 @@
 // port the container is published on. Override via env to run several
 // instances on one host without colliding.
 export const HOST_PORT = Number(process.env.E2E_HOST_PORT ?? 8988);
-export const CONTAINER_NAME = process.env.E2E_CONTAINER_NAME ?? 'euro-office-e2e';
+export const CONTAINER_NAME = process.env.E2E_CONTAINER_NAME ?? 'elixiroffice-e2e';
 export const DEFAULT_BASE_URL = `http://localhost:${HOST_PORT}`;

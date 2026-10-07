@@ -1,4 +1,4 @@
-name: Euro-Office development environment
+name: ElixirOffice development environment
 
 services:
   eo:
@@ -18,8 +18,8 @@ services:
       ALLOW_PRIVATE_IP_ADDRESS: true
       USE_UNAUTHORIZED_STORAGE: true
       EXAMPLE_ENABLED: true
-      JWT_SECRET: ${EO_JWT_SECRET:-euro-office-dev-jwt-secret-key-2026}
-      THEME: ${THEME:-euro-office}
+      JWT_SECRET: ${EO_JWT_SECRET:-elixiroffice-dev-jwt-secret-key-2026}
+      THEME: ${THEME:-elixiroffice}
     volumes:
       - ../:/develop:z # mounts deployed files to application
       - ./setup/Makefile:/Makefile:z # mounts deployed files to application
@@ -31,7 +31,7 @@ services:
     volumes:
       - nc_data:/var/www/html
       - ./setup/enable-office.sh:/docker-entrypoint-hooks.d/post-installation/enable-office.sh:ro,z
-      - ../../eurooffice-nextcloud:/var/www/html/custom_apps/eurooffice:ro,z
+      - ../../elixiroffice-nextcloud:/var/www/html/custom_apps/elixiroffice:ro,z
     environment:
       # 10.0.2.2 = Android emulator's alias for host. Mobile/LAN IPs are
       # applied post-boot by `make refresh-urls` so the container env stays
@@ -48,7 +48,7 @@ services:
     environment:
       ALLOW_PRIVATE_IP_ADDRESS: true
       USE_UNAUTHORIZED_STORAGE: true
-      JWT_SECRET: ${EO_JWT_SECRET:-euro-office-dev-jwt-secret-key-2026}
+      JWT_SECRET: ${EO_JWT_SECRET:-elixiroffice-dev-jwt-secret-key-2026}
 
 volumes:
   nc_data:

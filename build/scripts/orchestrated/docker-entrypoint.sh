@@ -93,7 +93,7 @@ if [[ "${JWT_ENABLED}" == "true" && -z "${JWT_SECRET:-}" ]]; then
 fi
 
 if [[ -n "${JWT_SECRET:-}" && ${#JWT_SECRET} -lt 32 ]]; then
-  echo "Warning: JWT_SECRET is ${#JWT_SECRET} characters; clients such as the EuroOffice connector require at least 32 and will refuse to connect." >&2
+  echo "Warning: JWT_SECRET is ${#JWT_SECRET} characters; clients such as the ElixirOffice connector require at least 32 and will refuse to connect." >&2
 fi
 
 # --------------------------------------------------------------------

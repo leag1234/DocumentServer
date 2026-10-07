@@ -9,7 +9,7 @@ const EDITOR_IFRAME = 'iframe[name="frameEditor"]';
  */
 export async function openNewEditor(page: Page, selector: string, urlExt: RegExp) {
   await page.goto('/example/');
-  await expect(page).toHaveTitle(/ONLYOFFICE|euro-office/i);
+  await expect(page).toHaveTitle(/ONLYOFFICE|elixiroffice/i);
 
   const newPagePromise = page.context().waitForEvent('page');
   await page.click(selector);

@@ -1,6 +1,6 @@
 ## What this repo is
 
-DocumentServer is the master orchestrator for the Euro-Office ecosystem. It manages all submodules, docker orchestration, and workspace-level build configurations.
+DocumentServer is the master orchestrator for the ElixirOffice ecosystem. It manages all submodules, docker orchestration, and workspace-level build configurations.
 
 This repo holds the workspace configuration for the submodules:
 - `core`, `core-fonts`, `sdkjs`, `sdkjs-forms`, `server`, `web-apps`, `dictionaries`, `document-formats`, `document-server-integration`, `document-server-package`, `document-templates`.
@@ -19,7 +19,7 @@ core-fonts → core/AllFontsGen → sdkjs (AllFonts.js) → web-apps → server 
 
 Each submodule has its own `AGENTS.md` with repo-specific guidance.
 
-The Nextcloud integration app lives in the **sibling repo `eurooffice-nextcloud`**, mounted read-only into the dev container.
+The Nextcloud integration app lives in the **sibling repo `elixiroffice-nextcloud`**, mounted read-only into the dev container.
 
 > **Shared submodules**: `core`, `sdkjs`, `web-apps`, `core-fonts`, and `sdkjs-forms` are also submodules of the **`DesktopEditors`** product (the Windows/Mac/Linux desktop app). A change merged to any of those repos affects both DocumentServer and DesktopEditors.
 
@@ -74,7 +74,7 @@ Troubleshooting: if `make` fails with `Makefile: No such file or directory`, the
 ### Test the change
 
 - **Example app** (no Nextcloud needed): open `http://localhost:8080/example/` — create a document, spreadsheet, or presentation and open it in the editor. The welcome page is at `http://localhost:8080/`.
-- **Service status & logs**: `docker compose exec -T eo supervisorctl status`; logs live under `/var/log/euro-office/documentserver/` (e.g. `docservice/out.log`, `converter/out.log`, `ds-example_out.log`).
+- **Service status & logs**: `docker compose exec -T eo supervisorctl status`; logs live under `/var/log/elixiroffice/documentserver/` (e.g. `docservice/out.log`, `converter/out.log`, `ds-example_out.log`).
 - **Conversion check**: opening a `.docx`/`.xlsx` in the example app exercises FileConverter + x2t; watch `converter/out.log` for errors.
 - **Nextcloud connector flow** (only when testing the integration): `docker compose up -d`, then `make refresh-urls` to wait for install and wire URLs/JWT; Nextcloud at `http://localhost:8081/` (admin/admin).
 
@@ -90,7 +90,7 @@ cd develop
 ./eo.sh ls | logs <name> | down <name>|--all   # manage; `up --force` to recreate
 ```
 
-Run a building instance from its own git worktree so builds don't share `node_modules`; a fresh worktree needs `git submodule update --init --recursive` first. JWT (secret `euro-office-dev-jwt-secret-key-2026`), `EXAMPLE_ENABLED` and `WOPI_ENABLED` are on, so the example app works out of the box.
+Run a building instance from its own git worktree so builds don't share `node_modules`; a fresh worktree needs `git submodule update --init --recursive` first. JWT (secret `elixiroffice-dev-jwt-secret-key-2026`), `EXAMPLE_ENABLED` and `WOPI_ENABLED` are on, so the example app works out of the box.
 
 ### Verify in a browser (Playwright MCP)
 
@@ -107,7 +107,7 @@ Don't trust HTTP 200 — the editor shell can load while the document download f
 
 All contributions generated or assisted by this agent must fully comply with:
 
-- **[AI Contribution Policy](https://github.com/Euro-Office/.github/blob/main/AI_POLICY.md)** — the primary reference for AI-specific rules, covering disclosure, author accountability, communication, security, licensing, code quality, and autonomous agent behavior.
+- **[AI Contribution Policy](https://github.com/elixiroffice/.github/blob/main/AI_POLICY.md)** — the primary reference for AI-specific rules, covering disclosure, author accountability, communication, security, licensing, code quality, and autonomous agent behavior.
 - **[Contribution Guidelines](CONTRIBUTING.md)** — covering testing requirements, sign-off, license headers, and the review process. These apply in full to all contributions regardless of how they were produced.
 
 ### What this agent must always do
@@ -124,7 +124,7 @@ All contributions generated or assisted by this agent must fully comply with:
 
 - Open issues, submit pull requests, post review comments, or send security reports autonomously. Every contribution must be reviewed and submitted by a human.
 - Add `Signed-off-by` tags to commits. Only the human contributor can certify the Developer Certificate of Origin.
-- Generate or submit security reports without independent human verification. Report verified vulnerabilities privately by email to the maintainers (`euro-office-team` on the `proton.me` mail server), not as GitHub issues.
+- Generate or submit security reports without independent human verification. Report verified vulnerabilities privately by email to the maintainers (`elixiroffice-team` on the `proton.me` mail server), not as GitHub issues.
 - Write PR descriptions, review comments, or issue reports on behalf of the contributor. These must be in the contributor's own words.
 - Fully automate the resolution of issues labeled [`good first issue`](https://github.com/search?q=org%3AEuro-Office+label%3A%22good+first+issue%22&type=issues) or similar beginner-friendly labels.
 - Submit code that has not been reviewed and cleaned up by the contributor. Dead code, redundant logic, excessive comments, and unrelated changes must be removed before submission.

@@ -56,7 +56,7 @@ FROM alpine AS bundle
     COPY --from=example /example/config /build/documentserver-example/config
 
     RUN find /build/documentserver-example/config/ -type f -name '*.json' \
-        -exec sed -i "s/euro-office/${COMPANY_NAME_LOW}/g" {} +
+        -exec sed -i "s/elixiroffice/${COMPANY_NAME_LOW}/g" {} +
     RUN find /build/documentserver-example/config/ -type f -name '*.json' \
         -exec sed -i "s/documentserver/${PRODUCT_NAME_LOW}/g" {} +
 
@@ -80,7 +80,7 @@ FROM alpine AS bundle
     COPY server/Common/config/. /build/documentserver/server/Common/config/
 
     RUN find /build/documentserver/server/Common/config/ -type f -name '*.json' \
-        -exec sed -i "s/euro-office/${COMPANY_NAME_LOW}/g" {} +
+        -exec sed -i "s/elixiroffice/${COMPANY_NAME_LOW}/g" {} +
     RUN find /build/documentserver/server/Common/config/ -type f -name '*.json' \
         -exec sed -i "s/documentserver/${PRODUCT_NAME_LOW}/g" {} +
 

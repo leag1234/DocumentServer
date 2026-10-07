@@ -5,10 +5,10 @@ The docker compose environment in this directory allows to run document server b
 
 Before starting, make sure Docker and your build user are set up: [Build Requisites](../build/BUILD_REQUISITES.md).
 
-- Clone the Euro-Office Nextcloud connector as a sibling of `DocumentServer` (i.e. inside the same `euro-office-public` parent):
+- Clone the ElixirOffice Nextcloud connector as a sibling of `DocumentServer` (i.e. inside the same `elixiroffice-public` parent):
   ```sh
-  git clone https://github.com/Euro-Office/eurooffice-nextcloud.git ../../eurooffice-nextcloud
-  cd ../../eurooffice-nextcloud && git submodule update --init --recursive && npm install && npm run build && composer install --no-dev
+  git clone https://github.com/elixiroffice/elixiroffice-nextcloud.git ../../elixiroffice-nextcloud
+  cd ../../elixiroffice-nextcloud && git submodule update --init --recursive && npm install && npm run build && composer install --no-dev
   cd ../DocumentServer/develop
   ```
 - Follow the repo cloning steps in the build readme
@@ -22,19 +22,19 @@ Before starting, make sure Docker and your build user are set up: [Build Requisi
     work or when changing the image/toolchain itself (this is the long, full build)
   - `make mobile` for Android emulator / physical LAN device testing (see below)
 
-  You may need to generate a PAT first, as described in https://github.com/Euro-Office/DocumentServer/pkgs/container/documentserver
+  You may need to generate a PAT first, as described in https://github.com/elixiroffice/DocumentServer/pkgs/container/documentserver
 - In docker-compose.yml, for the eo service, ensure that `target` is set to `develop`
 
 #### Using the image:
 
 - It's exposed at `http://localhost:8081/`
-- The Euro-Office Nextcloud connector (`eurooffice`) is installed and configured automatically. If not, follow these steps:
-    - Install via `docker compose exec nextcloud bash` -> `php occ app:enable eurooffice`
-    - Configure your instance at `http://localhost:8081/settings/admin/eurooffice`:
+- The ElixirOffice Nextcloud connector (`elixiroffice`) is installed and configured automatically. If not, follow these steps:
+    - Install via `docker compose exec nextcloud bash` -> `php occ app:enable elixiroffice`
+    - Configure your instance at `http://localhost:8081/settings/admin/elixiroffice`:
         - Docs address `http://localhost:8080/`
-        - Server address for internal requests from Euro-Office Docs `http://nextcloud/`
+        - Server address for internal requests from ElixirOffice Docs `http://nextcloud/`
         - Docs address for internal requests from Nextcloud `http://eo/`
-        - Secret key: `euro-office-dev-jwt-secret-key-2026`
+        - Secret key: `elixiroffice-dev-jwt-secret-key-2026`
     - Navigate to Files `http://localhost:8081/apps/files/`, create a document, and try to open it
 
 #### Testing from mobile devices and emulators
@@ -103,7 +103,7 @@ make next NC_BRANCH=stable33        # NC33 stable
 make next NC_BRANCH=stable34        # NC34 stable (once cut)
 ```
 
-`make next` swaps the official image for the source-clone dev image (`nextcloud-docker-dev`) via `docker-compose.next.yml`, and gives each NC branch its own named volume — switching between branches preserves each branch's installed state (eurooffice config, files, sessions). Compose detects the volume mount change and recreates the container automatically; no manual stop/rm.
+`make next` swaps the official image for the source-clone dev image (`nextcloud-docker-dev`) via `docker-compose.next.yml`, and gives each NC branch its own named volume — switching between branches preserves each branch's installed state (elixiroffice config, files, sessions). Compose detects the volume mount change and recreates the container automatically; no manual stop/rm.
 
 First boot per branch will be several minutes while NC clones and installs into the empty volume; subsequent switches reattach to the warm volume in seconds. During a long first boot the banner shows a live log line after 1000s so you can confirm progress is still happening.
 
@@ -186,7 +186,7 @@ worktree so parallel builds don't share (and clobber) `node_modules`.
 
 Instances start with `EXAMPLE_ENABLED=true` (test editor at `/example/`) and
 `WOPI_ENABLED=true`. JWT is **enabled** with a shared dev secret
-(`EO_JWT_SECRET`, default `euro-office-dev-jwt-secret-key-2026`) — the bundled example
+(`EO_JWT_SECRET`, default `elixiroffice-dev-jwt-secret-key-2026`) — the bundled example
 app always requires JWT, so this is what lets documents actually open. These are local
 test servers — **do not expose them publicly**. Override the image with `EO_IMAGE=…`
 (must be a `-dev` image; the production `:latest` lacks the build toolchain).
@@ -211,7 +211,7 @@ make web-apps
 ```
 
 #### Quick rebuild
-without npm ci, imagemin, or babel. Runs with the Euro Office theme.
+without npm ci, imagemin, or babel. Runs with the ElixirOffice theme.
 
 ```sh
 make web-apps-dev
@@ -221,7 +221,7 @@ make web-apps-dev
 Use `CFLAGS` to pass additional flags
 
 ```sh
-THEME=euro-office make web-apps-dev CFLAGS="--skip-imagemin"
+THEME=elixiroffice make web-apps-dev CFLAGS="--skip-imagemin"
 ````
 > The make build commands clear the cache, this does not.
 > Therefore you must run `/usr/bin/documentserver-flush-cache.sh`

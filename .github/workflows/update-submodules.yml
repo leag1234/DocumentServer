@@ -20,12 +20,12 @@ jobs:
           # Submodule contents are not needed: gitlinks are updated in the index
           # and history is read from commit-only bare clones below.
           submodules: false
-          token: ${{ secrets.EURO_OFFICE_MIRROR_TOKEN }}
+          token: ${{ secrets.ELIXIROFFICE_MIRROR_TOKEN }}
           fetch-depth: 1
 
       - name: Configure git identity
         run: |
-          git config user.name  "Euro-Office via GitHub Actions"
+          git config user.name  "ElixirOffice via GitHub Actions"
           git config user.email "actions@github.com"
 
       - name: Advance each submodule to latest default-branch commit
@@ -73,15 +73,15 @@ jobs:
       - name: Open PR if submodule pointers changed
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
-          token: ${{ secrets.EURO_OFFICE_MIRROR_TOKEN }}
+          token: ${{ secrets.ELIXIROFFICE_MIRROR_TOKEN }}
           branch: chore/nightly-submodule-bump
           base: main
           delete-branch: true
-          author: "Euro-Office via GitHub Actions <actions@github.com>"
-          committer: "Euro-Office via GitHub Actions <actions@github.com>"
+          author: "ElixirOffice via GitHub Actions <actions@github.com>"
+          committer: "ElixirOffice via GitHub Actions <actions@github.com>"
           commit-message: |
             chore: update submodules to latest main branch
 
-            Signed-off-by: Euro-Office via GitHub Actions <actions@github.com>
+            Signed-off-by: ElixirOffice via GitHub Actions <actions@github.com>
           title: "chore: update submodules to latest main branch"
           body-path: ${{ runner.temp }}/pr-body.md

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# eo.sh — run multiple isolated Euro-Office test servers in parallel.
+# eo.sh — run multiple isolated ElixirOffice test servers in parallel.
 #
 # Each instance is a single self-contained container (its own Postgres, Redis,
 # RabbitMQ, Nginx and supervisord) built from the prebuilt multi-arch dev image
@@ -19,7 +19,7 @@ EO_IMAGE="${EO_IMAGE:-ghcr.io/euro-office/documentserver:latest-dev}"
 # Shared, predictable JWT secret. The bundled example app always runs with JWT
 # enabled, so the document server must sign its requests with the same secret —
 # otherwise /download is rejected (403) and documents won't open. Override via env.
-EO_JWT_SECRET="${EO_JWT_SECRET:-euro-office-dev-jwt-secret-key-2026}"
+EO_JWT_SECRET="${EO_JWT_SECRET:-elixiroffice-dev-jwt-secret-key-2026}"
 LABEL="eo.test=1"
 PREFIX="eo-"
 
@@ -95,7 +95,7 @@ cmd_up() {
     -e JWT_SECRET="$EO_JWT_SECRET" \
     -e USE_UNAUTHORIZED_STORAGE=true \
     -e ALLOW_PRIVATE_IP_ADDRESS=true \
-    -e THEME="${THEME:-euro-office}" \
+    -e THEME="${THEME:-elixiroffice}" \
     -v "$root:/develop" \
     -v "$SCRIPT_DIR/setup/Makefile:/Makefile" \
     "$EO_IMAGE" >/dev/null; then
@@ -203,7 +203,7 @@ cmd_down() {
 
 usage() {
   cat <<'EOF'
-eo.sh — run multiple isolated Euro-Office test servers in parallel.
+eo.sh — run multiple isolated ElixirOffice test servers in parallel.
 
 Usage:
   eo.sh up [--force] <name> [port]
@@ -222,7 +222,7 @@ Env:
   EO_IMAGE        Override the image (default ghcr.io/euro-office/documentserver:latest-dev).
                   Must be a *-dev image — the production :latest lacks the build toolchain.
   EO_JWT_SECRET   Shared JWT secret for the document server and the bundled example app
-                  (default: euro-office-dev-jwt-secret-key-2026). Use this when signing
+                  (default: elixiroffice-dev-jwt-secret-key-2026). Use this when signing
                   API requests directly.
 
 Notes:

@@ -67,21 +67,21 @@ directory_setup() {
 	
   	mkdir -p ${_PKG_DIR}/DEBIAN
 	mkdir -p ${_PKG_DIR}/usr/bin ${_PKG_DIR}/usr/lib/systemd/system
-	mkdir -p ${_PKG_DIR}/etc/euro-office/documentserver
-	mkdir -p ${_PKG_DIR}/var/www/euro-office/documentserver
+	mkdir -p ${_PKG_DIR}/etc/elixiroffice/documentserver
+	mkdir -p ${_PKG_DIR}/var/www/elixiroffice/documentserver
 }
 
 
 prep_base() {
 	_PKG_DIR=$1
 	
-	cp -r /var/www/euro-office/documentserver/license ${_PKG_DIR}/var/www/euro-office/documentserver
-	cp -r /var/www/euro-office/documentserver/npm ${_PKG_DIR}/var/www/euro-office/documentserver
-	cp -r /var/www/euro-office/documentserver/dictionaries ${_PKG_DIR}/var/www/euro-office/documentserver
-	cp -r /var/www/euro-office/documentserver/document-templates ${_PKG_DIR}/var/www/euro-office/documentserver
+	cp -r /var/www/elixiroffice/documentserver/license ${_PKG_DIR}/var/www/elixiroffice/documentserver
+	cp -r /var/www/elixiroffice/documentserver/npm ${_PKG_DIR}/var/www/elixiroffice/documentserver
+	cp -r /var/www/elixiroffice/documentserver/dictionaries ${_PKG_DIR}/var/www/elixiroffice/documentserver
+	cp -r /var/www/elixiroffice/documentserver/document-templates ${_PKG_DIR}/var/www/elixiroffice/documentserver
 	
-	cp /var/www/euro-office/documentserver/LICENSE.txt ${_PKG_DIR}/var/www/euro-office/documentserver
-	cp /var/www/euro-office/documentserver/3rd-Party.txt ${_PKG_DIR}/var/www/euro-office/documentserver
+	cp /var/www/elixiroffice/documentserver/LICENSE.txt ${_PKG_DIR}/var/www/elixiroffice/documentserver
+	cp /var/www/elixiroffice/documentserver/3rd-Party.txt ${_PKG_DIR}/var/www/elixiroffice/documentserver
 }
 
 prep_server() {
@@ -89,33 +89,33 @@ prep_server() {
 	
 	cp /usr/bin/documentserver-* ${_PKG_DIR}/usr/bin/
 	cp /usr/lib/systemd/system/ds-* ${_PKG_DIR}/usr/lib/systemd/system/
-	cp -r /var/www/euro-office/documentserver/server ${_PKG_DIR}/var/www/euro-office/documentserver
-	rm -r ${_PKG_DIR}/var/www/euro-office/documentserver/server/FileConverter
+	cp -r /var/www/elixiroffice/documentserver/server ${_PKG_DIR}/var/www/elixiroffice/documentserver
+	rm -r ${_PKG_DIR}/var/www/elixiroffice/documentserver/server/FileConverter
 }
 
 prep_web_apps() {
 	_PKG_DIR=$1
 	
-	cp -r /var/www/euro-office/documentserver/web-apps ${_PKG_DIR}/var/www/euro-office/documentserver
+	cp -r /var/www/elixiroffice/documentserver/web-apps ${_PKG_DIR}/var/www/elixiroffice/documentserver
 }
 
 prep_core_fonts() {
 	_PKG_DIR=$1
 	
-	cp -r /var/www/euro-office/documentserver/core-fonts ${_PKG_DIR}/var/www/euro-office/documentserver
+	cp -r /var/www/elixiroffice/documentserver/core-fonts ${_PKG_DIR}/var/www/elixiroffice/documentserver
 }
 
 prep_sdkjs() {
 	_PKG_DIR=$1
 	
-	cp -r /var/www/euro-office/documentserver/sdkjs ${_PKG_DIR}/var/www/euro-office/documentserver
-	cp -r /var/www/euro-office/documentserver/sdkjs-plugins ${_PKG_DIR}/var/www/euro-office/documentserver
+	cp -r /var/www/elixiroffice/documentserver/sdkjs ${_PKG_DIR}/var/www/elixiroffice/documentserver
+	cp -r /var/www/elixiroffice/documentserver/sdkjs-plugins ${_PKG_DIR}/var/www/elixiroffice/documentserver
 }
 
 prep_core() {
 	_PKG_DIR=$1
 	
-	cp -r /var/www/euro-office/documentserver/server/FileConverter ${_PKG_DIR}/var/www/euro-office/documentserver/server
+	cp -r /var/www/elixiroffice/documentserver/server/FileConverter ${_PKG_DIR}/var/www/elixiroffice/documentserver/server
 }
 
 prep_all() {
@@ -134,7 +134,7 @@ create_control_file() {
 		Source: fork
 		Section: unknown
 		Priority: optional
-		Maintainer: EuroOffice<>
+		Maintainer: ElixirOffice<>
 		Build-Depends: debhelper-compat (= 13)
 		Standards-Version: 4.6.1
 		Homepage: <insert the upstream URL, if relevant>
@@ -145,7 +145,7 @@ create_control_file() {
 		Multi-Arch: foreign
 		Depends:
 		Description: 
-		 Simple package for the EuroOffice document server
+		 Simple package for the ElixirOffice document server
 	EOF
 
 }

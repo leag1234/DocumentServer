@@ -48,15 +48,15 @@ jobs:
     env:
       PATTERN: "Pursuant to Section 7(b)"
       BRANCH_NAME: chore/strip-logo-clause-${{ github.run_id }}
-      GIT_AUTHOR_NAME: Euro-Office Robot
+      GIT_AUTHOR_NAME: ElixirOffice Robot
       GIT_AUTHOR_EMAIL: eo-robot@users.noreply.github.com
-      GIT_COMMITTER_NAME: Euro-Office Robot
+      GIT_COMMITTER_NAME: ElixirOffice Robot
       GIT_COMMITTER_EMAIL: eo-robot@users.noreply.github.com
 
     steps:
       - name: Fetch templates
         env:
-          GH_TOKEN: ${{ secrets.EURO_OFFICE_MIRROR_TOKEN }}
+          GH_TOKEN: ${{ secrets.ELIXIROFFICE_MIRROR_TOKEN }}
         run: |
           mkdir -p /tmp/templates
           for f in strip-logo-clause-commit.txt strip-logo-clause-pr-body.txt; do
@@ -68,8 +68,8 @@ jobs:
       - name: Checkout ${{ matrix.repo }}
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: Euro-Office/${{ matrix.repo }}
-          token: ${{ secrets.EURO_OFFICE_MIRROR_TOKEN }}
+          repository: ElixirOffice/${{ matrix.repo }}
+          token: ${{ secrets.ELIXIROFFICE_MIRROR_TOKEN }}
           ref: main
 
       - name: Check for clause
@@ -129,11 +129,11 @@ jobs:
       - name: Create pull request
         if: steps.check.outputs.count != '0' && steps.commit.outputs.has_changes == 'true'
         env:
-          GH_TOKEN: ${{ secrets.EURO_OFFICE_MIRROR_TOKEN }}
+          GH_TOKEN: ${{ secrets.ELIXIROFFICE_MIRROR_TOKEN }}
         run: |
           sed 's/__COUNT__/${{ steps.check.outputs.count }}/g' /tmp/templates/strip-logo-clause-pr-body.txt > /tmp/pr-body.txt
           PR_URL=$(gh pr create \
-            --repo "Euro-Office/${{ matrix.repo }}" \
+            --repo "ElixirOffice/${{ matrix.repo }}" \
             --base main \
             --head "$BRANCH_NAME" \
             --title "chore(license): Remove non-obligatory Section 7 additions" \

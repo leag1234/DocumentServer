@@ -6,15 +6,15 @@
 | --------------------- | ------------------ |
 | Latest stable release | :white_check_mark: |
 
-Euro-Office is in active development. Security fixes are applied to the latest released version.
+ElixirOffice is in active development. Security fixes are applied to the latest released version.
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in Euro-Office, please report it responsibly. **Do not open a public issue.**
+If you discover a security vulnerability in ElixirOffice, please report it responsibly. **Do not open a public issue.**
 
 ### How to Report
 
-Use [GitHub's private vulnerability reporting](https://github.com/Euro-Office/DocumentServer/security/advisories/new) to submit a security advisory. This is the only channel for security reports and keeps the details private until a fix is available.
+Use [GitHub's private vulnerability reporting](https://github.com/elixiroffice/DocumentServer/security/advisories/new) to submit a security advisory. This is the only channel for security reports and keeps the details private until a fix is available.
 
 ### What to Include
 
@@ -40,12 +40,12 @@ Use [GitHub's private vulnerability reporting](https://github.com/Euro-Office/Do
 
 ## Scope
 
-This policy covers all repositories under the [Euro-Office](https://github.com/Euro-Office) organization.
+This policy covers all repositories under the [ElixirOffice](https://github.com/elixiroffice) organization.
 
 ## Security Considerations
 
-Euro-Office inherits code from the OnlyOffice project. Known CVEs affecting upstream OnlyOffice versions may also affect Euro-Office. If you are aware of an upstream vulnerability that has not been addressed here, please report it using the process above.
+ElixirOffice inherits code from the OnlyOffice project. Known CVEs affecting upstream OnlyOffice versions may also affect ElixirOffice. If you are aware of an upstream vulnerability that has not been addressed here, please report it using the process above.
 
 ## Acknowledgments
 
-We appreciate the security research community's efforts in helping keep Euro-Office and its users safe.
+We appreciate the security research community's efforts in helping keep ElixirOffice and its users safe.

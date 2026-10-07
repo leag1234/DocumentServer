@@ -7,7 +7,7 @@
 # branch (master / stable33 / stable34) instead of by Docker Hub release tag.
 #
 # Each NC_BRANCH gets its own named volume, so switching between branches preserves
-# each branch's installed state (eurooffice config, files, sessions, etc.).
+# each branch's installed state (elixiroffice config, files, sessions, etc.).
 #
 # Usage (run from DocumentServer/develop/):
 #   make next                                    (master, current NC dev trunk)
@@ -18,7 +18,7 @@
 # automatically; no manual stop/rm needed when switching NC_BRANCH.
 #
 # To wipe a single branch without touching the others:
-#   docker volume rm euro-officedevelopmentenvironment_nc_data_<branch>
+#   docker volume rm elixirofficedevelopmentenvironment_nc_data_<branch>
 
 services:
   nextcloud:
@@ -28,7 +28,7 @@ services:
       SQL: sqlite
     volumes:
       - nc_data:/var/www/html
-      - ../../eurooffice-nextcloud:/var/www/html/apps-extra/eurooffice
+      - ../../elixiroffice-nextcloud:/var/www/html/apps-extra/elixiroffice
       - ./setup/shared:/shared
 
 volumes:

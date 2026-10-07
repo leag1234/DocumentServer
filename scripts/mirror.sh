@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SOURCE_ORG="ONLYOFFICE"
-TARGET_ORG="Euro-Office"
+TARGET_ORG="ElixirOffice"
 
 CLONE_PATH="$(pwd)/../.."
 

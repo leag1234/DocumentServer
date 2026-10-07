@@ -6,7 +6,7 @@ variable "BRANDING_DIR" {
 }
 
 variable "COMPANY_NAME" {
-  default = "Euro-Office"
+  default = "ElixirOffice"
 }
 
 variable "COMPANY_NAME_LOW" {

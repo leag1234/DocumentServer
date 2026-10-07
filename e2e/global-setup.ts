@@ -1,7 +1,7 @@
 import { spawnSync } from 'child_process';
 import { CONTAINER_NAME, HOST_PORT } from './constants';
 
-const IMAGE = process.env.E2E_IMAGE ?? 'euro-office/documentserver:latest';
+const IMAGE = process.env.E2E_IMAGE ?? 'elixiroffice/documentserver:latest';
 const TIMEOUT_MS = 5 * 60 * 1000;
 const POLL_INTERVAL_MS = 3000;
 
