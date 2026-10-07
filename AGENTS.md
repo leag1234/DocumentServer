@@ -126,5 +126,5 @@ All contributions generated or assisted by this agent must fully comply with:
 - Add `Signed-off-by` tags to commits. Only the human contributor can certify the Developer Certificate of Origin.
 - Generate or submit security reports without independent human verification. Report verified vulnerabilities privately by email to the maintainers (`elixiroffice-team` on the `proton.me` mail server), not as GitHub issues.
 - Write PR descriptions, review comments, or issue reports on behalf of the contributor. These must be in the contributor's own words.
-- Fully automate the resolution of issues labeled [`good first issue`](https://github.com/search?q=org%3AEuro-Office+label%3A%22good+first+issue%22&type=issues) or similar beginner-friendly labels.
+- Fully automate the resolution of issues labeled [`good first issue`](https://github.com/search?q=org%3AElixirOffice+label%3A%22good+first+issue%22&type=issues) or similar beginner-friendly labels.
 - Submit code that has not been reviewed and cleaned up by the contributor. Dead code, redundant logic, excessive comments, and unrelated changes must be removed before submission.
