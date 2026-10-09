@@ -339,6 +339,18 @@ if [ -n "${DS_LOG_LEVEL:-}" ] && [ -f "$LOG4JS_CONFIG" ]; then
 fi
 
 # --------------------------------------------------------------------
+# Elixir AI (optional): ELIXIR_AI_BASE_URL / ELIXIR_AI_MODEL / ELIXIR_AI_API_KEY (docs/ai.md).
+# Variables set: the nginx include is regenerated at each start. Nothing set: AI is off, unless an
+# include already exists (written by an operator or by tools/demo/container-setup.sh), which is kept.
+# --------------------------------------------------------------------
+AI_INCLUDE="/etc/nginx/includes/ds-elixir-ai.conf"
+if [ -x /usr/local/bin/elixir-ai-conf.sh ] && [ -d /etc/nginx/includes ]; then
+  if [ -n "${ELIXIR_AI_BASE_URL:-}${ELIXIR_AI_API_KEY:-}${OPENAI_API_KEY:-}" ] || [ ! -f "$AI_INCLUDE" ]; then
+    ( umask 077; /usr/local/bin/elixir-ai-conf.sh > "$AI_INCLUDE" )
+  fi
+fi
+
+# --------------------------------------------------------------------
 # nginx tuning + SSL
 # --------------------------------------------------------------------
 if [ -f "$NGINX_CONFIG_PATH" ]; then
