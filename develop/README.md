@@ -58,7 +58,7 @@ make next-mobile NC_BRANCH=stable34     # mobile + NC34 stable
 IP detection uses `ipconfig` on macOS and `ip route` on Linux. On native Windows — or any machine where detection fails — pass it explicitly:
 
 ```sh
-make mobile HOST_LAN_IP=$HOST_LAN_IP
+make mobile HOST_LAN_IP=192.0.2.10
 ```
 
 When your LAN IP changes (new wifi, tethering, etc.), update the running stack without a full rebuild:
