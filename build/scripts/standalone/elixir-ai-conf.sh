@@ -8,9 +8,10 @@
 # it is never part of /elixir-ai/config.json, so it never reaches a browser.
 #
 #   ELIXIR_AI_BASE_URL  base URL of an OpenAI-compatible API, e.g. https://api.openai.com/v1,
-#                       https://api.mistral.ai/v1, http://ollama.internal:11434/v1, a vLLM server
+#                       https://api.mistral.ai/v1, http://localhost:11434/v1, a vLLM server
 #   ELIXIR_AI_MODEL     model name sent with each request (default gpt-4.1-mini for api.openai.com only)
 #   ELIXIR_AI_API_KEY   key for that endpoint (may be empty for a keyless endpoint such as Ollama)
+#   EO_AI_CA_FILE      optional readable PEM CA bundle inside the server container (system CA by default)
 #   OPENAI_API_KEY      legacy: equivalent to ELIXIR_AI_BASE_URL=https://api.openai.com/v1 + the key
 #
 # Nothing set (or invalid values): AI is off, /elixir-ai/config.json answers {"enabled":false}.
@@ -42,15 +43,69 @@ case "$BASE" in
   http://*|https://*) ;;
   *) off "ELIXIR_AI_BASE_URL must start with http:// or https://" ;;
 esac
-printf '%s' "$BASE" | grep -Eq '^https?://[A-Za-z0-9._:-]+(/[A-Za-z0-9._~%/-]*)?$' || off "ELIXIR_AI_BASE_URL has unsupported characters"
+printf '%s' "$BASE" | grep -Eq '^https?://([A-Za-z0-9._-]+|\[[0-9A-Fa-f:]+\])(:[0-9]{1,5})?(/[A-Za-z0-9._~%/-]*)?$' || off "ELIXIR_AI_BASE_URL has unsupported characters"
+HOSTPORT=${BASE#*://}; HOSTPORT=${HOSTPORT%%/*}
+case "$HOSTPORT" in
+  \[*)
+    HOSTONLY=${HOSTPORT#\[}; HOSTONLY=${HOSTONLY%%\]*}
+    SUFFIX=${HOSTPORT#*\]}
+    ;;
+  *)
+    HOSTONLY=${HOSTPORT%%:*}
+    SUFFIX=${HOSTPORT#"$HOSTONLY"}
+    ;;
+esac
+case "$HOSTPORT" in
+  \[*)
+    # Pure IPv6 literals only; reject malformed compression before emitting nginx syntax.
+    printf '%s' "$HOSTONLY" | awk -F: '
+      /:::/ { exit 1 }
+      { compressed=gsub(/::/, "&"); count=0;
+        if (compressed>1 || (compressed==0 && (NF!=8 || $0 ~ /^:/ || $0 ~ /:$/))) exit 1;
+        for(i=1;i<=NF;i++) if($i!="") { if(length($i)>4) exit 1; count++ }
+        if(compressed==1 && count>=8) exit 1;
+      }' || off "ELIXIR_AI_BASE_URL has an invalid IPv6 address"
+    ;;
+esac
+if [ -n "$SUFFIX" ]; then
+  PORT=${SUFFIX#:}
+  [ "$PORT" -ge 1 ] && [ "$PORT" -le 65535 ] || off "ELIXIR_AI_BASE_URL has an invalid port"
+fi
+case "$BASE" in
+  http://*)
+    case "$(printf '%s' "$HOSTPORT" | tr '[:upper:]' '[:lower:]')" in
+      localhost|localhost:[0-9]*|127.0.0.1|127.0.0.1:[0-9]*|\[::1\]|\[::1\]:[0-9]*) ;;
+      *) off "Remote AI services require HTTPS; HTTP is allowed only for localhost, 127.0.0.1 or [::1]" ;;
+    esac
+    ;;
+esac
 if [ -z "$MODEL" ]; then
   case "$BASE" in https://api.openai.com/*) MODEL="gpt-4.1-mini" ;; *) off "ELIXIR_AI_MODEL is required for this endpoint" ;; esac
 fi
 printf '%s' "$MODEL" | grep -Eq '^[A-Za-z0-9._:/@-]+$' || off "ELIXIR_AI_MODEL has unsupported characters"
 if [ -n "$KEY" ]; then printf '%s' "$KEY" | grep -Eq '^[A-Za-z0-9._~+/=:-]+$' || off "ELIXIR_AI_API_KEY has unsupported characters"; fi
 
-HOSTPORT=${BASE#*://}; HOSTPORT=${HOSTPORT%%/*}
-HOSTONLY=${HOSTPORT%%:*}
+# Authenticate HTTPS upstreams, including self-hosted services with a private CA.
+TLS_VERIFY=""
+case "$BASE" in
+  https://*)
+    CA_FILE=${EO_AI_CA_FILE:-}
+    if [ -z "$CA_FILE" ]; then
+      for candidate in /etc/ssl/certs/ca-certificates.crt /etc/pki/tls/certs/ca-bundle.crt /etc/ssl/ca-bundle.pem /etc/ssl/cert.pem; do
+        if [ -f "$candidate" ] && [ -r "$candidate" ]; then CA_FILE=$candidate; break; fi
+      done
+    fi
+    case "$CA_FILE" in /*) ;; *) off "No readable absolute CA bundle is configured" ;; esac
+    printf '%s' "$CA_FILE" | grep -Eq '^/[A-Za-z0-9._/-]+$' || off "CA bundle path contains unsupported characters"
+    case "/$CA_FILE/" in */../*) off "CA bundle path must not contain parent traversal" ;; esac
+    [ -f "$CA_FILE" ] && [ -r "$CA_FILE" ] || off "CA bundle is not a readable regular file"
+    command -v openssl >/dev/null 2>&1 || off "CA validation requires OpenSSL"
+    openssl x509 -in "$CA_FILE" -noout >/dev/null 2>&1 || off "CA bundle does not contain a readable certificate"
+    TLS_VERIFY="  proxy_ssl_verify on;
+  proxy_ssl_trusted_certificate $CA_FILE;
+  proxy_ssl_verify_depth 3;"
+    ;;
+esac
 AUTH=""
 [ -n "$KEY" ] && AUTH="  proxy_set_header Authorization \"Bearer $KEY\";"
 
@@ -66,6 +121,7 @@ location = /elixir-ai/v1/chat/completions {
   client_max_body_size 4m;
   proxy_pass $BASE/chat/completions;
   proxy_ssl_server_name on;
+$TLS_VERIFY
   proxy_http_version 1.1;
   proxy_set_header Host $HOSTPORT;
 $AUTH
